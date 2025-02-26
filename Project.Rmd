@@ -1,15 +1,100 @@
 ---
-title: "Project"
-output: html_document
-date: "2025-02-25"
+title: "Dog Project"
+author: "Alyson LastName, Fiona Davoudi, and Jenna LastName"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme: spacelab
+    toc: no
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Todo
+## Load the libraries 
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+``` 
+
+## Organization of Project
+
+Todo List
 
 1. Clean Data
-    - make nice names with underscores
-    - remove $
+    - make nice names with underscores - 
+    - remove $ and % from variables in dog_rankings - Fiona
+    - clean shelter_dogs?/maybe pivot some columns in either dataset - 
+    
+2. Introduction - what is our research topic? List ideas below:
+    - Making an App to choose a dog breed (dogs_ranking) and what are their traits, health situations. Combine with real shelter data on how many of that breed are typically available. 
+    - 
+    - 
+
+3. Methods - how will we analyze
+
+4. Visuals - graphs, what are our key variables?
+
+5. Conclusion - clear message
+
+6. Organize Repository (going off the example given, but we can refine)
+    - data folder
+    - background info folder - need to check if we have any
+    - shiny app folder
+    - exploring data
+    - graphs
+
+
+## Read in the Data
+
+"This data is a compilation of information on dogs who were available for adoption on December 12, 2019 in the Hungarian Database of Homeless Pets. In total, there were 2,937 dogs in the database. It contains information on dogs' names, breed, color, age, sex, the date they were found, and some characteristics of their personalities."
+[shelter_dogs](https://www.kaggle.com/datasets/jmolitoris/adoptable-dogs)
+```{r}
+shelter_dogs <- read_csv("ShelterDogs.csv") %>% clean_names()
+```
+
+"This dataset provides various attributes related to different dog breeds. Each row represents a specific breed and includes information on several characteristics, costs, and suitability aspects."
+[dog_rankings](https://www.kaggle.com/datasets/jainaru/dog-breeds-ranking-best-to-worst)
+```{r}
+dog_rankings <- read_csv("dogs-ranking-dataset.csv") %>% clean_names
+```
+
+## Evaluate Data
+
+```{r}
+glimpse(shelter_dogs)
+```
+
+```{r}
+glimpse(dog_rankings)
+```
+
+## Data Cleaning
+```{r}
+#change name of size_5 and size_9 column in dog_rankings
+```
+
+```{r}
+#remove $ or % from entries
+```
+
+```{r}
+
+```
+
+## Fiona Data Exploration
+```{r}
+
+```
+
+## Alyson Data Exploration
+```{r}
+
+```
+
+## Jenna Data Exploration
+```{r}
+
+```
+
