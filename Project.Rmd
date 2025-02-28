@@ -16,6 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(janitor)
+library(naniar)
 ``` 
 
 ## Organization of Project
@@ -77,6 +78,13 @@ glimpse(dog_rankings)
 
 ```{r}
 #remove $ or % from entries
+dog_rankings_c <- dog_rankings %>% 
+  mutate(lifetime_cost = str_remove(lifetime_cost, ",")) %>% 
+  mutate(lifetime_cost = str_remove(lifetime_cost, "\\$")) %>% 
+  mutate(intelligence_percent = str_remove(intelligence_percent, "%")) %>% 
+  mutate(purchase_price = str_remove(purchase_price, "\\$")) %>% 
+  mutate(food_costs_per_year = str_remove(food_costs_per_year, "\\$")) %>% 
+  select(lifetime_cost, intelligence_percent, purchase_price, food_costs_per_year)
 ```
 
 ```{r}
