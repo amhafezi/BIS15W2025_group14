@@ -25,7 +25,8 @@ Todo List
 
 1. Clean Data
     - make nice names with underscores - 
-    - remove $ and % from variables in dog_rankings - Fiona
+    - remove $ and , and % from variables in dog_rankings - Fiona
+    - change chr to num variables when needed - Fiona
     - clean shelter_dogs?/maybe pivot some columns in either dataset - 
     
 2. Introduction - what is our research topic? List ideas below:
@@ -77,14 +78,28 @@ glimpse(dog_rankings)
 ```
 
 ```{r}
-#remove $ or % from entries
+#remove $ or , or % from entries
 dog_rankings_c <- dog_rankings %>% 
   mutate(lifetime_cost = str_remove(lifetime_cost, ",")) %>% 
   mutate(lifetime_cost = str_remove(lifetime_cost, "\\$")) %>% 
   mutate(intelligence_percent = str_remove(intelligence_percent, "%")) %>% 
   mutate(purchase_price = str_remove(purchase_price, "\\$")) %>% 
+  mutate(purchase_price = str_remove(purchase_price, ",")) %>% 
   mutate(food_costs_per_year = str_remove(food_costs_per_year, "\\$")) %>% 
+  mutate(food_costs_per_year = str_remove(food_costs_per_year, ","))
+
+dog_rankings_c %>% 
   select(lifetime_cost, intelligence_percent, purchase_price, food_costs_per_year)
+```
+```{r}
+#convert chr to num
+dog_rankings_c <- dog_rankings_c %>% 
+  mutate(lifetime_cost = as.numeric(lifetime_cost)) %>% 
+  mutate(intelligence_percent = as.numeric(intelligence_percent)) %>% 
+  mutate(purchase_price = as.numeric(purchase_price)) %>% 
+  mutate(food_costs_per_year = as.numeric(food_costs_per_year))
+
+glimpse(dog_rankings_c)
 ```
 
 ```{r}
@@ -93,8 +108,53 @@ dog_rankings_c <- dog_rankings %>%
 
 ## Fiona Data Exploration
 ```{r}
-
+#popularity by type of dog
+dog_rankings_c %>% 
+  group_by(type) %>% 
+  summarize(popularity = mean(popularity_ranking)) %>% 
+  arrange(desc(popularity))
 ```
+
+Two type of scoring for family/kid friendly
+
+1. score_for_kids: A rating indicating how suitable the breed is for families with children. Higher scores suggest greater suitability. Intelligence + longevity + ailments + cost scores (50% each) + 100% grooming score. highest possible score: 5
+
+2. suitability_for_children: The suitability of the breed for families with children, typically measured on a scale (1 = high suitability, 2= medium suitability, 3= low suitability).
+```{r}
+#good for kids
+dog_rankings_c %>% 
+  arrange(suitability_for_children) %>% 
+  select(breed, suitability_for_children, score_for_kids) %>% 
+  filter(score_for_kids >= 4.00) %>% 
+  arrange(-score_for_kids)
+```
+```{r}
+#most expensive purchase dog
+dog_rankings_c %>% 
+  select(breed, type, lifetime_cost, purchase_price, food_costs_per_year, grooming_frequncy) %>% 
+  slice_max(purchase_price, n=20) %>% 
+  ggplot(aes(x=reorder(breed, purchase_price), y=purchase_price))+
+  geom_col()+
+  coord_flip()
+```
+```{r}
+#cheapest purchase dog
+dog_rankings_c %>% 
+  select(breed, type, lifetime_cost, purchase_price, food_costs_per_year, grooming_frequncy) %>% 
+  slice_min(purchase_price, n=20) %>% 
+  ggplot(aes(x=reorder(breed, -purchase_price), y=purchase_price))+
+  geom_col()+
+  coord_flip()
+```
+
+
+```{r}
+#most common breed in shelter
+shelter_dogs %>% 
+  count(breed) %>% 
+  arrange(desc(n))
+```
+
 
 ## Alyson Data Exploration
 ```{r}
