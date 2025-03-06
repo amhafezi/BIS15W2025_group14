@@ -75,6 +75,9 @@ glimpse(dog_rankings)
 ## Data Cleaning
 ```{r}
 #change name of size_5 and size_9 column in dog_rankings
+dog_rankings_c <- dog_rankings %>% 
+  rename(size_scale = size_5) %>% 
+  rename(size_descriptions = size_9)
 ```
 
 ```{r}
@@ -103,7 +106,7 @@ glimpse(dog_rankings_c)
 ```
 
 ```{r}
-
+write.csv(dog_rankings_c, "dog_rankings_c.csv", row.names = FALSE)
 ```
 
 ## Fiona Data Exploration
