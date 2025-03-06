@@ -1,6 +1,6 @@
 ---
 title: "Dog Project"
-author: "Alyson LastName, Fiona Davoudi, and Jenna LastName"
+author: "Allyson Hafezi, Fiona Davoudi, and Jenna LastName"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -156,10 +156,44 @@ shelter_dogs %>%
 ```
 
 
-## Alyson Data Exploration
+## Allyson Data Exploration
 ```{r}
-
+dog_rankings_c
 ```
+```{r}
+#Graphs for the Presentation
+  # 1) Is popularity determined by breed intelligence?
+dog_rankings_c %>% 
+  ggplot(aes(x=popularity_ranking, y=intelligence_rank))+
+  geom_col()
+
+#No correlation, popular dogs have no correlation with intelligence
+```
+```{r}
+# 2) Does breed size (smaller or larger dogs) correlate with number of genetic aliments?
+dog_rankings_c %>% 
+  ggplot(aes(x=size_9, y=number_of_genetic_ailments))+
+  geom_boxplot()
+
+#No correlation
+```
+
+```{r}
+# 3) Is there a correlation between size and longevity? Do smaller dogs live longer according to this data?
+dog_rankings_c %>% 
+  ggplot(aes(x=size_9, y=longevity_years))+
+  geom_col()
+
+#There is a correlation! Small dogs live longer!
+```
+```{r}
+# 4) Do small dogs tend to be more popular?
+dog_rankings_c %>% 
+  ggplot(aes(x=popularity_ranking, y=size_9))+
+  geom_col()+
+```
+
+
 
 ## Jenna Data Exploration
 ```{r}
