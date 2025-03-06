@@ -163,6 +163,87 @@ shelter_dogs %>%
 
 ## Jenna Data Exploration
 ```{r}
+summary(shelter_dogs)
+```
 
+```{r}
+#number of male and female dogs
+shelter_dogs %>% 
+  select(sex, breed) %>% 
+  count(sex)
+```
+
+```{r}
+#breeds in the shelter
+shelter_dogs %>% 
+  filter(breed != "Adoptable From:", breed != "Unknown Mix") %>% 
+  count(breed) %>% 
+  arrange(-n)
+```
+
+```{r}
+#different breeds of SMALL dogs in the shelter waiting to be adopted
+small_breeds <- shelter_dogs %>% 
+  select(breed, size) %>% 
+  filter(breed != "Unknown Mix", size == "small") %>% 
+  count(breed) %>% 
+  arrange(-n)
+small_breeds
+```
+
+```{r}
+#different breeds of MEDIUM dogs in the shelter waiting to be adopted
+medium_breeds <- shelter_dogs %>% 
+  select(breed, size) %>% 
+  filter(breed != "Unknown Mix", size == "medium") %>% 
+  count(breed) %>% 
+  arrange(-n)
+medium_breeds
+```
+
+```{r}
+#different breeds of LARGE dogs in the shelter waiting to be adopted
+large_breeds <- shelter_dogs %>% 
+  select(breed, size) %>% 
+  filter(breed != "Unknown Mix", breed != "Adoptable From:", size == "large") %>% 
+  count(breed) %>% 
+  arrange(-n)
+large_breeds
+```
+
+```{r}
+dog_rankings %>% 
+  count(type)
+```
+
+
+```{r}
+#age distribution
+shelter_dogs %>% 
+  ggplot(aes(x = age))+
+  geom_density(color = 'black', fill = 'hotpink', alpha = 0.6)
+```
+
+#Shiny App is going to be an interactive quiz for people looking to adopt a dog. First choose what breed they are looking for
+
+#Quiz Question #1: What type of dog are you looking for?
+  Answer choices would include: Herding, hound, non-sporting, sporting, terrier, toy, or working
+  
+#Quiz Question #2
+
+```{r}
+library(shiny)
+
+ui <- fluidPage(
+  title = "Adopt don't Shop!",
+  sidebarPanel()
+  
+)
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui, server)
 ```
 
