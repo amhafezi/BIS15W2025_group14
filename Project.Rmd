@@ -1,6 +1,6 @@
 ---
 title: "Dog Project"
-author: "Allyson Hafezi, Fiona Davoudi, and Jenna LastName"
+author: "Allyson Hafezi, Fiona Davoudi, and Jenna Hussein"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -20,6 +20,7 @@ library(naniar)
 library("ggthemes")
 library("RColorBrewer")
 library("paletteer")
+library(ggplot2)
 ``` 
 
 ## Organization of Project
@@ -306,36 +307,12 @@ shelter_dogs %>%
   theme_few()+
   scale_fill_manual(values=my_palette)
 ```
-```{r}
-#install.packages("colourpicker")
-#install.packages("magick")
-#install.packages("scales")
-#install.packages("imager")
-library(magick)
-library(scales)
-library(imager)
-library(colourpicker)
-img <- image_read("colors.png")
-
-# Convert to a data frame
-img_data <- as.data.frame(img, wide = "c") 
-
-# Extract unique colors and select top 6 most frequent
-top_colors <- img_data %>%
-  count(rgb = rgb(c.1, c.2, c.3, maxColorValue = 255)) %>%
-  arrange(desc(n)) %>%
-  head(6)  # Select top 6 colors
-
-# Display the colors
-show_col(top_colors$rgb)
-```
-
 
 ```{r}
-my_extended_palette <- c("#FDE725", "#7AD151", "#22A884", "#2A788E", "#414487","#FBAE17", "#468C48", "#3F4DA2")
+my_extended_palette <- c("#b9c7e2", "#edab99", "#ddb109", "#5b6530", "#9484b0", "#22A884", "#2A788E", "#FBAE17")
 
 dog_rankings_c %>%
-  ggplot(aes(x = type, y = popularity_ranking, fill = type))+
+  ggplot(aes(x = reorder(type, popularity_ranking), y = popularity_ranking, fill = type))+
   geom_boxplot()+
   coord_flip()+
   labs(title = "Most Popular Type of Dog", 
@@ -346,8 +323,20 @@ dog_rankings_c %>%
   scale_fill_manual(values=my_extended_palette)
 ```
 
+```{r}
+dog_rankings_c %>% 
+  ggplot(aes(x=as.factor(number_of_genetic_ailments), y=longevity_years, fill=as.factor(number_of_genetic_ailments)))+
+  geom_boxplot()+
+  labs(title = "Genetic Ailments vs. Longevity", 
+       x= "Number of Genetic Ailments", 
+       y= "Longevity (years)", 
+       fill = "Genetic Ailments")+
+  theme_few()+
+  scale_fill_manual(values=my_extended_palette)
+```
 
-##Shiny App 
+
+##Shiny App - delete this section??
 
 #Quiz Question #1: What type of dog are you looking for?
   Answer choices would include: Herding, hound, non-sporting, sporting, terrier, toy, or working
@@ -379,11 +368,6 @@ install.packages("shinythemes")
 install.packages("DT")
 
 ```
-
-```{r}
-
-```
-
 
 ##Shelter Dogs Shiny App - Allyson Hafezi
 
@@ -535,12 +519,6 @@ server <- function(input, output, session) {
 shinyApp(ui = ui, server = server)
 ```
 
-
-
-
-
-
-
 ```{r}
 library(shiny)
 
@@ -630,4 +608,4 @@ shinyApp(ui, server)
 ```
 
 
-
+##Shiny App Dog Rankings - Jenna Hussein
