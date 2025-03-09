@@ -24,15 +24,13 @@ library(naniar)
 Todo List
 
 1. Clean Data
-    - make nice names with underscores - 
-    - remove $ and , and % from variables in dog_rankings - Fiona
-    - change chr to num variables when needed - Fiona
-    - clean shelter_dogs?/maybe pivot some columns in either dataset - 
+    - make nice names with underscores 
+    - remove $ and , and % from variables in dog_rankings 
+    - change chr to num variables when needed
+    - clean shelter_dogs?/maybe pivot some columns in either dataset 
     
 2. Introduction - what is our research topic? List ideas below:
     - Making an App to choose a dog breed (dogs_ranking) and what are their traits, health situations. Combine with real shelter data on how many of that breed are typically available. 
-    - 
-    - 
 
 3. Methods - how will we analyze
 
@@ -53,13 +51,13 @@ Todo List
 "This data is a compilation of information on dogs who were available for adoption on December 12, 2019 in the Hungarian Database of Homeless Pets. In total, there were 2,937 dogs in the database. It contains information on dogs' names, breed, color, age, sex, the date they were found, and some characteristics of their personalities."
 [shelter_dogs](https://www.kaggle.com/datasets/jmolitoris/adoptable-dogs)
 ```{r}
-shelter_dogs <- read_csv("ShelterDogs.csv") %>% clean_names()
+shelter_dogs <- read_csv("datasets/ShelterDogs.csv") %>% clean_names()
 ```
 
 "This dataset provides various attributes related to different dog breeds. Each row represents a specific breed and includes information on several characteristics, costs, and suitability aspects."
 [dog_rankings](https://www.kaggle.com/datasets/jainaru/dog-breeds-ranking-best-to-worst)
 ```{r}
-dog_rankings <- read_csv("dogs-ranking-dataset.csv") %>% clean_names
+dog_rankings <- read_csv("datasets/dogs-ranking-dataset.csv") %>% clean_names
 ```
 
 ## Evaluate Data
@@ -72,14 +70,17 @@ glimpse(shelter_dogs)
 glimpse(dog_rankings)
 ```
 
-## Data Cleaning
+## Data Cleaning - Fiona
 ```{r}
 #change name of size_5 and size_9 column in dog_rankings
+dog_rankings_c <- dog_rankings %>% 
+  rename(size_score=size_5) %>% 
+  rename(size_description=size_9)
 ```
 
 ```{r}
 #remove $ or , or % from entries
-dog_rankings_c <- dog_rankings %>% 
+dog_rankings_c <- dog_rankings_c %>% 
   mutate(lifetime_cost = str_remove(lifetime_cost, ",")) %>% 
   mutate(lifetime_cost = str_remove(lifetime_cost, "\\$")) %>% 
   mutate(intelligence_percent = str_remove(intelligence_percent, "%")) %>% 
@@ -88,9 +89,8 @@ dog_rankings_c <- dog_rankings %>%
   mutate(food_costs_per_year = str_remove(food_costs_per_year, "\\$")) %>% 
   mutate(food_costs_per_year = str_remove(food_costs_per_year, ","))
 
-dog_rankings_c %>% 
-  select(lifetime_cost, intelligence_percent, purchase_price, food_costs_per_year)
 ```
+
 ```{r}
 #convert chr to num
 dog_rankings_c <- dog_rankings_c %>% 
@@ -101,9 +101,8 @@ dog_rankings_c <- dog_rankings_c %>%
 
 glimpse(dog_rankings_c)
 ```
-
 ```{r}
-
+write.csv(dog_rankings_c, "datasets/dog_rankings_c", row.names = F)
 ```
 
 ## Fiona Data Exploration
@@ -172,7 +171,7 @@ dog_rankings_c %>%
 ```{r}
 # 2) Does breed size (smaller or larger dogs) correlate with number of genetic aliments?
 dog_rankings_c %>% 
-  ggplot(aes(x=size_9, y=number_of_genetic_ailments))+
+  ggplot(aes(x=size_description, y=number_of_genetic_ailments))+
   geom_boxplot()
 
 #No correlation
@@ -181,7 +180,7 @@ dog_rankings_c %>%
 ```{r}
 # 3) Is there a correlation between size and longevity? Do smaller dogs live longer according to this data?
 dog_rankings_c %>% 
-  ggplot(aes(x=size_9, y=longevity_years))+
+  ggplot(aes(x=size_description, y=longevity_years))+
   geom_col()
 
 #There is a correlation! Small dogs live longer!
@@ -189,7 +188,7 @@ dog_rankings_c %>%
 ```{r}
 # 4) Do small dogs tend to be more popular?
 dog_rankings_c %>% 
-  ggplot(aes(x=popularity_ranking, y=size_9))+
+  ggplot(aes(x=popularity_ranking, y=size_description))+
   geom_col()+
 ```
 
