@@ -377,7 +377,7 @@ library(shinythemes)
 library(tidyverse)
 
 # Load dataset
-dog_data <- read_csv("ShelterDogs.csv")
+dog_data <- read_csv("datasets/ShelterDogs.csv")
 
 ui <- fluidPage(
   theme = shinytheme("cerulean"),
@@ -519,6 +519,9 @@ server <- function(input, output, session) {
 shinyApp(ui = ui, server = server)
 ```
 
+
+##Shiny App Dog Rankings - Jenna Hussein
+
 ```{r}
 library(shiny)
 
@@ -606,6 +609,3 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 ```
-
-
-##Shiny App Dog Rankings - Jenna Hussein
