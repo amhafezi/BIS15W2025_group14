@@ -356,7 +356,31 @@ dog_rankings_c %>%
 ```
 
 ```{r}
+#size vs longevity
+dog_rankings_c %>% 
+  ggplot(aes(x=size_description, y=longevity_years, fill = size_description))+
+  geom_boxplot()+
+  labs(title = "Size vs. Longevity", 
+       x= "Size", 
+       y= "Longevity (years)", 
+       fill = "Size")+
+  theme_few()+
+  scale_fill_manual(values=my_extended_palette)
+```
 
+```{r}
+#intelligence vs popularity
+dog_rankings_c %>% 
+  mutate(intelligence = factor(intelligence, levels = c("Lowest", "Fair", "Average", "Above average", "Excellent", "Brightest"))) %>%
+  ggplot(aes(x=intelligence_percent, y=score, color = intelligence))+
+  geom_point()+
+  geom_smooth(method=lm, se=T, color = "black") + 
+  labs(title = "Intelligence vs. Popularity", 
+       x= "Intelligence Percent", 
+       y= "Score", 
+       color = "Intelligence")+
+  theme_few()+
+  scale_color_manual(values=my_extended_palette)
 ```
 
 ## Shelter Dogs Shiny App - Allyson Hafezi
