@@ -402,25 +402,28 @@ dog_data <- read_csv("datasets/ShelterDogs.csv")
 ui <- fluidPage(
   theme = shinytheme("cerulean"),
   tags$head(tags$style(HTML("
-    body { background-color: #f0f8ff; }
+    body { background-color: #f0f8ff; font-size: 18px; }
     .title-panel { text-align: center; padding: 20px; }
     .panel-box {
       background: #ffffff;
-      padding: 20px;
+      padding: 25px;
       border-radius: 10px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       margin: 20px auto;
-      max-width: 800px;
+      max-width: 850px;
     }
-    h1, h3, label { color: #333333; }
-    .btn-primary { background-color: #ff6b6b; border-color: #ff6b6b; }
+    h1 { font-size: 40px; color: #333333; }
+    h3 { font-size: 28px; color: #333333; }
+    label { font-size: 20px; color: #333333; font-weight: bold; }
+    .btn-primary { font-size: 22px; padding: 12px 20px; background-color: #ff6b6b; border-color: #ff6b6b; }
     .btn-primary:hover { background-color: #ff4757; border-color: #ff4757; }
     .dog-card {
       background: #fff;
-      padding: 15px;
+      padding: 20px;
       margin-bottom: 15px;
       border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      font-size: 20px;
     }
   "))),
   
@@ -522,11 +525,11 @@ server <- function(input, output, session) {
     df <- filtered_data()
     if (nrow(df) == 0) {
       return(h4("No matches found! Try adjusting your preferences.",
-                style = "color: red; text-align: center;"))
+                style = "color: red; text-align: center; font-size: 22px;"))
     }
     lapply(1:nrow(df), function(i) {
       div(class = "dog-card",
-          h4(df$name[i], style = "color: #ff6b6b;"),
+          h4(df$name[i], style = "color: #ff6b6b; font-size: 24px;"),
           p(strong("Breed:"), df$breed[i]),
           p(strong("Sex:"), df$sex[i]),
           p(strong("Size:"), df$size[i]),
@@ -554,35 +557,58 @@ dog_data <- read.csv("datasets/dog_rankings_c.csv")
 ui <- fluidPage(
   theme = shinytheme("sandstone"),
   
-  # Add custom CSS for styling the dog cards
+  # Add custom CSS for styling the dog cards with larger fonts
   tags$style(HTML("
+    body {
+      font-size: 18px; /* Increase the base font size */
+    }
+    .title-panel h1 {
+      font-size: 40px; /* Title size */
+      color: #ff6b6b;
+    }
+    .sidebar-panel {
+      font-size: 20px; /* Larger font for sidebar inputs */
+    }
+    .main-panel h3, .main-panel h4 {
+      font-size: 28px; /* Larger font for section titles */
+      color: #333333;
+    }
     .dog-card {
       background-color: #f9f9f9;
       border-radius: 10px;
-      padding: 10px;
+      padding: 20px;
       margin-bottom: 20px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      font-size: 20px; /* Larger font inside the dog cards */
     }
     .dog-card h4 {
       color: #ff6b6b;
+      font-size: 26px; /* Name in dog card */
     }
     .dog-card p {
-      font-size: 14px;
+      font-size: 20px; /* Text inside dog card */
+    }
+    .btn-primary, .btn-warning {
+      font-size: 22px; /* Larger button text */
+      padding: 15px 25px; /* Increase padding for easier clicking */
+    }
+    .btn-primary:hover, .btn-warning:hover {
+      font-size: 22px;
     }
   ")),
   
-  div(class = "title-panel", h1("🐶 Find Your Perfect Breed! 🐾", style = "color: #ff6b6b;")),
+  div(class = "title-panel", h1("🐶 Find Your Perfect Breed! 🐾")),
   
   sidebarLayout(
     sidebarPanel(
       class = "sidebar-panel",
       
-      # Input widgets
+      # Input widgets with larger font sizes
       selectInput("dog_type", "Dog Type:", choices = c("Any", unique(dog_data$type))),
       selectInput("intelligence", "Intelligence Level:", choices = c("Any", "Above average", "Average", "Excellent", "Fair", "Brightest", "Lowest")),
       selectInput("size_descriptions", "Size Description:", choices = c("Any", "small", "medium", "large")),
       sliderInput("longevity", "Longevity (years):", min = 9, max = 17, value = c(9, 17), step = 1),
-      selectInput("grooming_frequency", "Grooming Frequency:", choices = c("Any", unique(dog_data$grooming_frequncy))),
+      selectInput("grooming_frequency", "Grooming Frequency:", choices = c("Any", unique(dog_data$grooming_frequency))),
       selectInput("breed", "Breed:", choices = c("Any", unique(dog_data$breed))),
       
       br(),
@@ -630,7 +656,7 @@ server <- function(input, output, session) {
     }
     df <- df[df$longevity_years >= input$longevity[1] & df$longevity_years <= input$longevity[2], ]
     if (input$grooming_frequency != "Any") {
-      df <- df[tolower(trimws(df$grooming_frequncy)) == tolower(trimws(input$grooming_frequency)), ]
+      df <- df[tolower(trimws(df$grooming_frequency)) == tolower(trimws(input$grooming_frequency)), ]
     }
     if (input$breed != "Any") {
       df <- df[tolower(df$breed) == tolower(input$breed), ]
@@ -660,7 +686,7 @@ server <- function(input, output, session) {
           p(strong("Dog Type:"), dog$type),
           p(strong("Intelligence Level:"), dog$intelligence),
           p(strong("Longevity:"), dog$longevity_years, "years"),
-          p(strong("Grooming Frequency:"), dog$grooming_frequncy)
+          p(strong("Grooming Frequency:"), dog$grooming_frequency)
       )
     })
     
@@ -676,5 +702,6 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui, server)
+
 ```
 
