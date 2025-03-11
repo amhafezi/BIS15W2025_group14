@@ -528,49 +528,29 @@ shinyApp(ui = ui, server = server)
 #Dog Rankings Shiny App - Jenna Hussein
 =======
 ##Shiny App Dog Rankings - Jenna Hussein
-
->>>>>>> 2a66fa5b0bf62a0a060fe37869c96214ae7f9baf
 ```{r}
 library(shiny)
 library(shinythemes)
 
-
-dog_data <- read.csv("dog_rankings_c.csv")
-
 ui <- fluidPage(
-   theme = shinytheme("sandstone"),
+  theme = shinytheme("sandstone"),
   div(class = "title-panel", h1("🐶 Find Your Perfect Dog! 🐾", style = "color: #ff6b6b;")),
   sidebarLayout(
     sidebarPanel(
       class = "sidebar-panel",
       
-      # Dog type selection
-      selectInput("dog_type", "Dog Type:", 
-                  choices = c("Any", unique(dog_data$type))),
-      
-      # Intelligence selection
-      selectInput("intelligence", "Intelligence Level:", 
-                  choices = c("Any", "Above average", "Average", "Excellent", "Fair", "Brightest", "Lowest")),
-      
-      # Size description selection
-      selectInput("size_descriptions", "Size Description:", 
-                  choices = c("Any", "small", "medium", "large")),
-      
-      # Longevity slider
-      sliderInput("longevity", "Longevity (years):", 
-                  min = 9, max = 17, value = c(9, 17), step = 1),
-      
-      # Grooming frequency selection
-      selectInput("grooming_frequency", "Grooming Frequency:", 
-                  choices = c("Any", unique(dog_data$grooming_frequncy))),
-      
-      # Breed selection
+      selectInput("dog_type", "Dog Type:", choices = c("Any", unique(dog_data$type))),
+      selectInput("intelligence", "Intelligence Level:", choices = c("Any", "Above average", "Average", "Excellent", "Fair", "Brightest", "Lowest")),
+      selectInput("size_descriptions", "Size Description:", choices = c("Any", "small", "medium", "large")),
+      sliderInput("longevity", "Longevity (years):", min = 9, max = 17, value = c(9, 17), step = 1),
+      selectInput("grooming_frequency", "Grooming Frequency:", choices = c("Any", unique(dog_data$grooming_frequncy))),
       selectInput("breed", "Breed:", choices = c("Any", unique(dog_data$breed))),
       
       br(),
       actionButton("find", "🐾 Find My Dog!", class = "btn-primary btn-lg"),
-      actionButton("reset", "🔄 Reset Choices", class = "btn-warning btn-lg")  # Reset button
+      actionButton("reset", "🔄 Reset Choices", class = "btn-warning btn-lg")
     ),
+    
     mainPanel(
       class = "main-panel",
       h3("🐕 Your Best Matches:"),
@@ -583,7 +563,8 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-  # Function to reset inputs to default values
+  
+  # Reset inputs to default values
   observeEvent(input$reset, {
     updateSelectInput(session, "dog_type", selected = "Any")
     updateSelectInput(session, "intelligence", selected = "Any")
@@ -596,76 +577,61 @@ server <- function(input, output, session) {
   filtered_data <- eventReactive(input$find, {
     df <- dog_data
     
-    # Filter based on dog type
     if (input$dog_type != "Any") {
-      df <- df[tolower(df$type) == tolower(input$dog_type),]
+      df <- df[tolower(df$type) == tolower(input$dog_type), ]
     }
-    
-    # Filter based on intelligence level
     if (input$intelligence != "Any") {
-      df <- df[tolower(df$intelligence) == tolower(input$intelligence),]
+      df <- df[tolower(df$intelligence) == tolower(input$intelligence), ]
     }
-
-    # Filter based on size descriptions
     if (input$size_descriptions != "Any") {
-      df <- df[tolower(df$size_descriptions) == tolower(input$size_descriptions),]
+      df <- df[tolower(df$size_descriptions) == tolower(input$size_descriptions), ]
     }
-
-    # Filter based on longevity range
-    df <- df[df$longevity_years >= input$longevity[1] & df$longevity_years <= input$longevity[2],]
-
-    # Filter based on grooming frequency (correct spelling)
+    df <- df[df$longevity_years >= input$longevity[1] & df$longevity_years <= input$longevity[2], ]
     if (input$grooming_frequency != "Any") {
-      df <- df[tolower(trimws(df$grooming_frequncy)) == tolower(trimws(input$grooming_frequency)),]
+      df <- df[tolower(trimws(df$grooming_frequncy)) == tolower(trimws(input$grooming_frequency)), ]
     }
-
-    # Filter based on breed
     if (input$breed != "Any") {
-      df <- df[tolower(df$breed) == tolower(input$breed),]
+      df <- df[tolower(df$breed) == tolower(input$breed), ]
     }
     
-    # Add RowID column for unique ID
-    df$RowID <- seq_along(df$breed)  # Add unique RowID based on the row index
-
     df
   })
-
-  # Display the number of results
+  
+  # Display number of results
   output$num_results <- renderText({
     paste("Number of Matches:", nrow(filtered_data()))
   })
-
-  # Render the list of dog matches with their unique IDs
+  
+  # Display dog matches
   output$results <- renderUI({
     dog_list <- filtered_data()
     if (nrow(dog_list) == 0) {
       return(h4("No matches found! Try adjusting your preferences.", style = "color: red; text-align: center;"))
     }
+    
     dog_ui <- lapply(1:nrow(dog_list), function(i) {
       dog <- dog_list[i, ]
-      # Display dog information along with a unique ID
       div(class = "dog-card",
           h4(dog$name, style = "color: #ff6b6b;"),
           p(strong("Breed:"), dog$breed),
           p(strong("Size:"), dog$size_descriptions),
-          p(strong("Dog Type:"), dog$type),  # Display dog type
+          p(strong("Dog Type:"), dog$type),
           p(strong("Intelligence Level:"), dog$intelligence),
           p(strong("Longevity:"), dog$longevity_years, "years"),
-          p(strong("Grooming Frequency:"), dog$grooming_frequncy),
-          # Display unique ID for each dog
-          p(strong("Unique ID:"), dog$RowID),  # Show RowID
-          p("Scroll through the dog rankings table below and find the dog with this Unique ID.")
+          p(strong("Grooming Frequency:"), dog$grooming_frequncy)
       )
     })
+    
     do.call(tagList, dog_ui)
   })
-
-  # Render the full dog rankings table (unfiltered) with unique IDs
+  
+  # Display dog rankings table
   output$rankings_table <- renderTable({
     df <- dog_data
-    df$RowID <- seq_along(df$breed)  # Add RowID column for unique ID in the rankings table
     df
   }, striped = TRUE, hover = TRUE, bordered = TRUE, rownames = TRUE, escape = FALSE)
 }
 shinyApp(ui, server)
 ```
+
+>>>>>>> 2a66fa5b0bf62a0a060fe37869c96214ae7f9baf
