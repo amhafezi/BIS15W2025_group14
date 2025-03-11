@@ -404,7 +404,6 @@ ui <- fluidPage(
       border-radius: 10px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       margin: 20px auto;
-      max-width: 800px;
     }
     h1, h3, label { color: #333333; }
     .btn-primary { background-color: #ff6b6b; border-color: #ff6b6b; }
@@ -418,103 +417,70 @@ ui <- fluidPage(
     }
   "))),
   div(class = "title-panel", h1("🐶 Find Your Perfect Dog! 🐾")),
- 
-  # Row for all questions (displayed on one panel at the top)
-  fluidRow(
-    column(12,
-           div(class = "panel-box",
-               h3("Tell us about your ideal dog!"),
-               selectInput("size", "Preferred Dog Size:",
-                           choices = c("Not Important", unique(dog_data$size))),
-               selectInput("coat", "Preferred Coat Type:",
-                           choices = c("Not Important", unique(dog_data$coat))),
-               selectInput("coat_color", "What coat color do you prefer?",
-                           choices = c("Not Important", unique(dog_data$color))),
-               selectInput("sex", "Preferred Sex:",
-                           choices = c("Not Important", unique(dog_data$sex))),
-               sliderInput("age", "Preferred Age Range:",
-                           min = floor(min(dog_data$age, na.rm = TRUE)),
-                           max = ceiling(max(dog_data$age, na.rm = TRUE)),
-                           value = c(floor(min(dog_data$age, na.rm = TRUE)),
-                                     ceiling(max(dog_data$age, na.rm = TRUE))),
-                           step = 1),
-               selectInput("good_with_kids", "Good with children?",
-                           choices = c("Not Important", "yes")),
-               selectInput("good_with_males", "Good with male dogs?",
-                           choices = c("Not Important", "yes")),
-               selectInput("good_with_females", "Good with female dogs?",
-                           choices = c("Not Important", "yes")),
-               selectInput("good_with_cats", "Good with cats?",
-                           choices = c("Not Important", "yes")),
-               selectInput("house_trained", "House Trained?",
-                           choices = c("Not Important", "yes")),
-               selectInput("neutered", "Neutered?",
-                           choices = c("Not Important", "yes", "no")),
-               br(),
-               actionButton("find", "🐾 Find My Dog!", class = "btn-primary btn-lg")
-           )
-    )
-  ),
- 
-  # Row for the results (displayed below the questions)
-  fluidRow(
-    column(12,
-           div(class = "panel-box",
-               h3("Your Best Matches:"),
-               h4(textOutput("num_results")),
-               uiOutput("results")
-           )
+
+  # Sidebar layout with two columns
+  sidebarLayout(
+    sidebarPanel(
+      width = 5,  # Controls the width of the question panel
+      div(class = "panel-box",
+          h3("Tell us about your ideal dog!"),
+          selectInput("size", "Preferred Dog Size:", choices = c("Not Important", unique(dog_data$size))),
+          selectInput("coat", "Preferred Coat Type:", choices = c("Not Important", unique(dog_data$coat))),
+          selectInput("coat_color", "What coat color do you prefer?", choices = c("Not Important", unique(dog_data$color))),
+          selectInput("sex", "Preferred Sex:", choices = c("Not Important", unique(dog_data$sex))),
+          sliderInput("age", "Preferred Age Range:",
+                      min = floor(min(dog_data$age, na.rm = TRUE)),
+                      max = ceiling(max(dog_data$age, na.rm = TRUE)),
+                      value = c(floor(min(dog_data$age, na.rm = TRUE)), ceiling(max(dog_data$age, na.rm = TRUE))),
+                      step = 1),
+          selectInput("good_with_kids", "Good with children?", choices = c("Not Important", "yes")),
+          selectInput("good_with_males", "Good with male dogs?", choices = c("Not Important", "yes")),
+          selectInput("good_with_females", "Good with female dogs?", choices = c("Not Important", "yes")),
+          selectInput("good_with_cats", "Good with cats?", choices = c("Not Important", "yes")),
+          selectInput("house_trained", "House Trained?", choices = c("Not Important", "yes")),
+          selectInput("neutered", "Neutered?", choices = c("Not Important", "yes", "no")),
+          br(),
+          actionButton("find", "🐾 Find My Dog!", class = "btn-primary btn-lg")
+      )
+    ),
+
+    mainPanel(
+      width = 7,  # Controls the width of the results panel
+      div(class = "panel-box",
+          h3("Your Best Matches:"),
+          h4(textOutput("num_results")),
+          uiOutput("results")
+      )
     )
   )
 )
 
 server <- function(input, output, session) {
- 
+
   filtered_data <- eventReactive(input$find, {
     df <- dog_data
-    if (input$size != "Not Important") {
-      df <- df %>% filter(size == input$size)
-    }
-    if (input$coat != "Not Important") {
-      df <- df %>% filter(coat == input$coat)
-    }
-    if (input$coat_color != "Not Important") {
-      df <- df %>% filter(color == input$coat_color)
-    }
-    if (input$sex != "Not Important") {
-      df <- df %>% filter(sex == input$sex) 
-    }
+    if (input$size != "Not Important") df <- df %>% filter(size == input$size)
+    if (input$coat != "Not Important") df <- df %>% filter(coat == input$coat)
+    if (input$coat_color != "Not Important") df <- df %>% filter(color == input$coat_color)
+    if (input$sex != "Not Important") df <- df %>% filter(sex == input$sex) 
     df <- df %>% filter(age >= input$age[1] & age <= input$age[2])
-    if (input$good_with_kids == "yes") {
-      df <- df %>% filter(likes_children == "yes")
-    }
-    if (input$good_with_males == "yes") {
-      df <- df %>% filter(get_along_males == "yes")
-    }
-    if (input$good_with_females == "yes") {
-      df <- df %>% filter(get_along_females == "yes")
-    }
-    if (input$good_with_cats == "yes") {
-      df <- df %>% filter(get_along_cats == "yes")
-    }
-    if (input$house_trained == "yes") {
-      df <- df %>% filter(housebroken == "yes")
-    }
-    if (input$neutered != "Not Important") {
-      df <- df %>% filter(neutered == input$neutered)
-    }
+    if (input$good_with_kids == "yes") df <- df %>% filter(likes_children == "yes")
+    if (input$good_with_males == "yes") df <- df %>% filter(get_along_males == "yes")
+    if (input$good_with_females == "yes") df <- df %>% filter(get_along_females == "yes")
+    if (input$good_with_cats == "yes") df <- df %>% filter(get_along_cats == "yes")
+    if (input$house_trained == "yes") df <- df %>% filter(housebroken == "yes")
+    if (input$neutered != "Not Important") df <- df %>% filter(neutered == input$neutered)
     df
   })
- 
+
   output$num_results <- renderText({
     paste("Number of Matches:", nrow(filtered_data()))
   })
- 
+
   output$results <- renderUI({
     df <- filtered_data()
     if (nrow(df) == 0) {
-      return(h4("No matches found! Try adjusting your preferences.",
-                style = "color: red; text-align: center;"))
+      return(h4("No matches found! Try adjusting your preferences.", style = "color: red; text-align: center;"))
     }
     lapply(1:nrow(df), function(i) {
       div(class = "dog-card",
@@ -531,6 +497,7 @@ server <- function(input, output, session) {
 }
 
 shinyApp(ui = ui, server = server)
+
 ```
 
 
