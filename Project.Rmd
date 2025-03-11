@@ -259,7 +259,6 @@ shelter_dogs %>%
   geom_density(color = 'black', fill = 'hotpink', alpha = 0.6)
 ```
 
-
 ## Notable Graphs for Presentation Visuals
 
 ```{r}
@@ -267,33 +266,7 @@ shelter_dogs %>%
 colors <- paletteer::palettes_d_names
 my_palette <- paletteer_d("calecopal::superbloom1")
 my_extended_palette <- c("#b9c7e2", "#edab99", "#ddb109", "#5b6530", "#9484b0", "#22A884", "#2A788E", "#FBAE17",  "#FBCE89", "#196F6A", "#E26D5A", "#7A8439")
-barplot(rep(1,6), axes=FALSE, col=my_palette)
-
-```
-
-```{r}
-#size and longevity correlation
-dog_rankings_c %>% 
-  ggplot(aes(x=size_description, y=longevity_years, fill = size_description))+
-  geom_boxplot()+
-  labs(title = "Correlation of Size and Longevity", 
-       x = "Dog Size", 
-       y = "Longevity (years)",
-       fill = "Size")+
-  theme_few()+
-  scale_fill_manual(values=my_palette)
-```
-
-```{r}
-#age distribution
-shelter_dogs %>% 
-  ggplot(aes(x = age))+
-  geom_density(color = 'black', fill = 'lightblue', alpha = 0.6)+
-  labs(title = "Distribution of Shelter Dog's Age", 
-       x = "Age", 
-       y = "Density")+
-  theme_few()+
-  scale_fill_manual(values=my_palette)
+barplot(rep(1,12), axes=FALSE, col=my_extended_palette)
 ```
 
 ```{r}
@@ -308,6 +281,18 @@ shelter_dogs %>%
        x= "Breed", 
        y= "Count", 
        fill = "Breed")+
+  theme_few()+
+  scale_fill_manual(values=my_palette)
+```
+
+```{r}
+#age distribution
+shelter_dogs %>% 
+  ggplot(aes(x = age))+
+  geom_density(color = 'black', fill = 'lightblue', alpha = 0.6)+
+  labs(title = "Distribution of Shelter Dog's Age", 
+       x = "Age", 
+       y = "Density")+
   theme_few()+
   scale_fill_manual(values=my_palette)
 ```
@@ -329,6 +314,25 @@ shelter_dogs %>%
 ```
 
 ```{r}
+#traits present
+shelter_dogs %>% 
+  pivot_longer(neutered:get_along_cats,
+               names_to = "traits", 
+               values_to = "have_trait") %>% 
+  filter(have_trait == "yes") %>% 
+  ggplot(aes(x=traits, fill = traits))+
+  geom_bar()+
+  labs(title = "Shelter Dogs Traits", 
+       x= "Trait", 
+       y= "Count", 
+       fill = "Trait")+
+  theme_few()+
+  theme(axis.text.x=element_text(angle=60, hjust=1))+
+  scale_fill_manual(values=my_extended_palette)
+```
+
+```{r}
+#now looking at dog_rankings dataset
 #popular type of dog
 dog_rankings_c %>%
   ggplot(aes(x = reorder(type, popularity_ranking), y = popularity_ranking, fill = type))+
@@ -338,32 +342,6 @@ dog_rankings_c %>%
        x= "Dog Type", 
        y= "Popularity Score", 
        fill = "Dog Type")+
-  theme_few()+
-  scale_fill_manual(values=my_extended_palette)
-```
-
-```{r}
-#number of genetic ailments vs longevity
-dog_rankings_c %>% 
-  ggplot(aes(x=as.factor(number_of_genetic_ailments), y=longevity_years, fill=as.factor(number_of_genetic_ailments)))+
-  geom_boxplot()+
-  labs(title = "Genetic Ailments vs. Longevity", 
-       x= "Number of Genetic Ailments", 
-       y= "Longevity (years)", 
-       fill = "Genetic Ailments")+
-  theme_few()+
-  scale_fill_manual(values=my_extended_palette)
-```
-
-```{r}
-#size vs longevity
-dog_rankings_c %>% 
-  ggplot(aes(x=size_description, y=longevity_years, fill = size_description))+
-  geom_boxplot()+
-  labs(title = "Size vs. Longevity", 
-       x= "Size", 
-       y= "Longevity (years)", 
-       fill = "Size")+
   theme_few()+
   scale_fill_manual(values=my_extended_palette)
 ```
@@ -381,6 +359,34 @@ dog_rankings_c %>%
        color = "Intelligence")+
   theme_few()+
   scale_color_manual(values=my_extended_palette)
+```
+
+```{r}
+#size vs longevity
+dog_rankings_c %>% 
+  ggplot(aes(x=size_description, y=longevity_years, fill = size_description))+
+  geom_boxplot()+
+  labs(title = "Size vs. Longevity", 
+       x= "Size", 
+       y= "Longevity (years)", 
+       fill = "Size")+
+  theme_few()+
+  scale_fill_manual(values=my_extended_palette)
+```
+
+```{r}
+#genetic ailments vs size
+dog_rankings_c %>%
+  group_by(size_description) %>%
+  summarise(avg_genetic_ailments = mean(number_of_genetic_ailments, na.rm = TRUE)) %>%
+  ggplot(aes(x = size_description, y = avg_genetic_ailments, fill = size_description)) +
+  geom_col(position = 'dodge') +
+  labs(title = "Genetic Ailments vs. Size", 
+       x = "Size", 
+       y = "Average Number of Genetic Ailments", 
+       fill = "Size Category") +
+  theme_few() +
+  scale_fill_manual(values = my_extended_palette)
 ```
 
 ## Shelter Dogs Shiny App - Allyson Hafezi
