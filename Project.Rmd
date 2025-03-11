@@ -534,30 +534,14 @@ shinyApp(ui = ui, server = server)
 ```
 
 
-<<<<<<< HEAD
-
-
-
-
-<<<<<<< HEAD
-#Dog Rankings Shiny App - Jenna Hussein
-=======
 ##Shiny App Dog Rankings - Jenna Hussein
-=======
-## Dog Rankings Shiny App - Jenna Hussein
 
->>>>>>> 2a66fa5b0bf62a0a060fe37869c96214ae7f9baf
->>>>>>> 84ce2574208c7f15626fb7827a35240717e98324
 ```{r}
 library(shiny)
 library(shinythemes)
 
-<<<<<<< HEAD
-=======
-
 dog_data <- read.csv("datasets/dog_rankings_c.csv")
 
->>>>>>> 84ce2574208c7f15626fb7827a35240717e98324
 ui <- fluidPage(
   theme = shinytheme("sandstone"),
   div(class = "title-panel", h1("🐶 Find Your Perfect Dog! 🐾", style = "color: #ff6b6b;")),
@@ -660,4 +644,3 @@ server <- function(input, output, session) {
 shinyApp(ui, server)
 ```
 
->>>>>>> 2a66fa5b0bf62a0a060fe37869c96214ae7f9baf
