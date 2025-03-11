@@ -6,6 +6,7 @@ output:
   html_document:
     theme: spacelab
     toc: no
+runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
@@ -131,6 +132,7 @@ dog_rankings_c %>%
   filter(score_for_kids >= 4.00) %>% 
   arrange(-score_for_kids)
 ```
+
 ```{r}
 #most expensive purchase dog
 dog_rankings_c %>% 
@@ -258,13 +260,15 @@ shelter_dogs %>%
 ```
 
 
-##Notable Graphs for Presentation Visuals
+## Notable Graphs for Presentation Visuals
 
 ```{r}
 #theme and colors
 colors <- paletteer::palettes_d_names
 my_palette <- paletteer_d("calecopal::superbloom1")
+my_extended_palette <- c("#b9c7e2", "#edab99", "#ddb109", "#5b6530", "#9484b0", "#22A884", "#2A788E", "#FBAE17",  "#FBCE89", "#196F6A", "#E26D5A", "#7A8439")
 barplot(rep(1,6), axes=FALSE, col=my_palette)
+
 ```
 
 ```{r}
@@ -309,8 +313,23 @@ shelter_dogs %>%
 ```
 
 ```{r}
-my_extended_palette <- c("#b9c7e2", "#edab99", "#ddb109", "#5b6530", "#9484b0", "#22A884", "#2A788E", "#FBAE17")
+#color of dogs available at the shelter
+shelter_dogs %>%
+  count(color) %>%
+  slice_max(n, n = 12) %>%
+  ggplot(aes(x = reorder(color, n), y = n, fill = color)) +
+  geom_bar(stat = "identity")+
+  coord_flip()+
+  labs(title = "Dog Colors Available in the Shelter", 
+       x= "Color", 
+       y= "Count", 
+       fill = "Color")+
+  theme_few()+
+  scale_fill_manual(values=my_extended_palette)
+```
 
+```{r}
+#popular type of dog
 dog_rankings_c %>%
   ggplot(aes(x = reorder(type, popularity_ranking), y = popularity_ranking, fill = type))+
   geom_boxplot()+
@@ -324,6 +343,7 @@ dog_rankings_c %>%
 ```
 
 ```{r}
+#number of genetic ailments vs longevity
 dog_rankings_c %>% 
   ggplot(aes(x=as.factor(number_of_genetic_ailments), y=longevity_years, fill=as.factor(number_of_genetic_ailments)))+
   geom_boxplot()+
@@ -335,41 +355,35 @@ dog_rankings_c %>%
   scale_fill_manual(values=my_extended_palette)
 ```
 
-
-##Shiny App - delete this section??
-
-#Quiz Question #1: What type of dog are you looking for?
-  Answer choices would include: Herding, hound, non-sporting, sporting, terrier, toy, or working
-  
-#Quiz Question #2
-
 ```{r}
-library(shiny)
-
-ui <- fluidPage(
-  title = "Adopt don't Shop!",
-  sidebarPanel()
-  
-)
-
-server <- function(input, output, session) {
-  
-}
-
-shinyApp(ui, server)
-```
-
-
-```{r}
-install.packages("shinythemes")
+#size vs longevity
+dog_rankings_c %>% 
+  ggplot(aes(x=size_description, y=longevity_years, fill = size_description))+
+  geom_boxplot()+
+  labs(title = "Size vs. Longevity", 
+       x= "Size", 
+       y= "Longevity (years)", 
+       fill = "Size")+
+  theme_few()+
+  scale_fill_manual(values=my_extended_palette)
 ```
 
 ```{r}
-install.packages("DT")
-
+#intelligence vs popularity
+dog_rankings_c %>% 
+  mutate(intelligence = factor(intelligence, levels = c("Lowest", "Fair", "Average", "Above average", "Excellent", "Brightest"))) %>%
+  ggplot(aes(x=intelligence_percent, y=score, color = intelligence))+
+  geom_point()+
+  geom_smooth(method=lm, se=T, color = "black") + 
+  labs(title = "Intelligence vs. Popularity", 
+       x= "Intelligence Percent", 
+       y= "Score", 
+       color = "Intelligence")+
+  theme_few()+
+  scale_color_manual(values=my_extended_palette)
 ```
 
-##Shelter Dogs Shiny App - Allyson Hafezi
+## Shelter Dogs Shiny App - Allyson Hafezi
 
 ```{r}
 library(shiny)
@@ -525,13 +539,25 @@ shinyApp(ui = ui, server = server)
 
 
 
+<<<<<<< HEAD
 #Dog Rankings Shiny App - Jenna Hussein
 =======
 ##Shiny App Dog Rankings - Jenna Hussein
+=======
+## Dog Rankings Shiny App - Jenna Hussein
+
+>>>>>>> 2a66fa5b0bf62a0a060fe37869c96214ae7f9baf
+>>>>>>> 84ce2574208c7f15626fb7827a35240717e98324
 ```{r}
 library(shiny)
 library(shinythemes)
 
+<<<<<<< HEAD
+=======
+
+dog_data <- read.csv("datasets/dog_rankings_c.csv")
+
+>>>>>>> 84ce2574208c7f15626fb7827a35240717e98324
 ui <- fluidPage(
   theme = shinytheme("sandstone"),
   div(class = "title-panel", h1("🐶 Find Your Perfect Dog! 🐾", style = "color: #ff6b6b;")),
